@@ -1,12 +1,31 @@
 plugins {
-    id 'java'
+  id 'java'
+  id("maven-publish")
 }
 
 group 'io.github.ecies'
 version '0.0.1'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/agrozyme/ecies-java")
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_USERNAME")
+        password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_PUBLISH_TOKEN")
+      }
+    }
+    publications {
+      gpr(MavenPublication) {
+        from(components.java)
+      }
+    }
+  }
 }
 
 configurations {
